@@ -1,0 +1,68 @@
+# Copy this to config.yaml and edit before running Guided mode.
+# Any field you leave as-is falls back to the default taxonomy in references/taxonomy.md.
+
+# Which folders to scan. ~/Downloads is almost always included.
+targets:
+  - ~/Downloads
+  # - ~/Pictures
+  # - ~/Videos
+  # - ~/Music
+
+# Scan subfolders too, not just top-level files? Leave false for Downloads
+# (files usually land flat there); true is more common for reorganizing
+# an already-nested Pictures/Videos/Music library.
+recursive: false
+
+# Where files with no confident classification should go.
+# ambiguous_photo_default: applied when an image has no EXIF, no filename
+#   signal, and review capacity is exhausted. Defaults to Downloads/Unsorted
+#   — a wrong photo guess buried three folders deep is harder to find later
+#   than an unsorted file left where it landed.
+# unknown_extension_default: applied when the file's extension isn't in any
+#   bucket (e.g. .xyz, .dat, no extension at all). Same default, but split
+#   out so a user can route e.g. a code dump of unknown extensions to
+#   ~/Code/Unsorted without changing where ambiguous photos go.
+ambiguous_photo_default: "Downloads/Unsorted"
+unknown_extension_default: "Downloads/Unsorted"
+# Back-compat alias — if a config has only the old name, it applies to
+# BOTH cases. Prefer the two split keys above.
+# ambiguous_default: "Downloads/Unsorted"
+
+# Max number of ambiguous images flagged for visual review in one run.
+# Keep this reasonable — each one is a real per-file cost to Claude.
+# Matches the --ambiguous-cap CLI flag on scan_and_plan.py.
+ambiguous_cap: 30
+
+# Extra clusters beyond the defaults in references/taxonomy.md.
+# Match on filename substring (case-insensitive) OR extension.
+# First matching rule wins; defaults apply after these.
+custom_clusters:
+  # - name: "Documents/School"
+  #   match_filename_contains: ["assignment", "lecture", "syllabus"]
+  # - name: "Pictures/Memes"
+  #   match_filename_contains: ["meme", "funny"]
+  # - name: "Downloads/Installers"
+  #   match_extension: ["deb", "appimage", "run"]
+
+# Folders/files to never touch, in addition to dotfiles (always excluded).
+exclude:
+  # - ~/Downloads/Work Archive 2024
+
+# If true, subdivide Pictures/Camera by year (Pictures/Camera/2026, etc.)
+# Note: if Pictures already has its own year folders, that existing pattern
+# wins automatically regardless of this setting — this only matters when
+# there's no existing scheme to extend.
+camera_photos_by_year: false
+
+# How to handle folders that are already organized (see Step 0.5 in SKILL.md):
+#   extend     - fold new/stray files into what's already there, leave organized files alone (recommended)
+#   reorganize - re-file everything, including already-organized files, per this config/the defaults.
+#                Risky: a file's folder can be the only record of info an empty ID3 tag or generic
+#                filename doesn't carry (e.g. which artist a track is by).
+#                IMPORTANT: setting this to "reorganize" here does NOT skip the confirmation prompt.
+#                Claude will still ask you to explicitly confirm before running a reorganize, every
+#                time, regardless of what this file says — a destructive setting doesn't get to
+#                become silent just because it's been silent before. Only "extend" can be pre-answered.
+#   fresh-only - ignore existing structure entirely, only ever touch loose top-level files
+# Leave unset to be asked interactively when an existing scheme is detected.
+# structure_mode: extend

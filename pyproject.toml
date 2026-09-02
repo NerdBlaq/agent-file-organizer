@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-file-organizer"
+version = "1.0.0"
+description = "Intelligent, safety-first file organizer for Linux & XDG desktops, Agent Skills, and MCP."
+readme = "README.md"
+authors = [
+    { name = "Michael" }
+]
+license = { text = "MIT" }
+keywords = ["file-organizer", "ai-agent", "agent-skill", "claude-code", "antigravity", "mcp", "fastmcp"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+    "Operating System :: POSIX :: Linux",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+mcp = [
+    "mcp>=1.0.0",
+]
+media = [
+    "Pillow>=9.0.0",
+    "mutagen>=1.45.0",
+    "pillow-heif>=0.10.0",
+]
+all = [
+    "agent-file-organizer[mcp,media]",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov",
+    "black",
+    "flake8",
+]
+
+[project.scripts]
+file-organizer = "file_organizer.cli:main"
+file-organizer-mcp = "file_organizer.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["file_organizer*"]
