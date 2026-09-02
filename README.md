@@ -11,7 +11,7 @@ Whether you use **Windows File Explorer**, **macOS Finder**, or **Linux desktop 
 Traditional file organizers blindly sort by file extension (e.g. all `.jpg`s to Pictures). **Agent File Organizer** uses semantic understanding and content heuristics:
 
 - 📸 **Smart Image Sorting**: Distinguishes between screenshots, camera/phone captures (via EXIF metadata), receipts/invoices, and ambiguous images.
-- 🎮 **Minecraft & Mod Support**: Identifies Minecraft mod `.jar` files (`fabric`, `forge`, `quilt`, `neoforge`) and routes them cleanly away from generic application JARs.
+- 🎮 **Minecraft & Mod Support**: Identifies Minecraft mod `.jar` files (`fabric`, `forge`, `quilt`, `neoforge`, `optifine`, `sodium`) and routes them cleanly away from generic application JARs.
 - 🎵 **Music & Audio Hierarchy**: Organizes music by `<Artist>/<Album>` using ID3 tags or filename patterns, while respecting existing flat music folders.
 - 🎥 **Video Classification**: Separates screen recordings (OBS, Zoom, screencasts) from clips and movies.
 - 💻 **Universal Compatibility**: Works natively on **Windows**, **macOS**, and **Linux** without requiring any proprietary file-manager plugins or APIs.
@@ -21,38 +21,49 @@ Traditional file organizers blindly sort by file extension (e.g. all `.jpg`s to 
 
 ## 🚀 3 Ways to Use
 
-### 1. 🤖 As an AI Agent Skill (Claude Code, Antigravity, & AI Agents)
-This repository includes a drop-in **Agent Skill** compliant with the Agent Skills standard.
+### 1. 🤖 As an AI Agent Skill (Antigravity, Claude Code, OpenAI Codex, & More)
+This repository includes a drop-in **Agent Skill** compliant with the Agent Skills standard (`SKILL.md`).
 
-- **Antigravity (Global)**:
+#### 🪐 Antigravity
+- **Global (All Projects)**:
   ```bash
   cp -r skills/file-organizer ~/.gemini/config/skills/
   ```
-- **Antigravity (Project-level)**:
+- **Project-Level**:
   ```bash
   mkdir -p .agents/skills
   cp -r skills/file-organizer .agents/skills/
   ```
-- **Claude Code**:
-  ```bash
-  mkdir -p ~/.claude/skills
-  cp -r skills/file-organizer ~/.claude/skills/
-  ```
 
-Once installed, simply ask your agent:
-> *"Organize my Downloads folder"* or type `file-organizer`
+#### 🧠 Claude Code
+```bash
+mkdir -p ~/.claude/skills
+cp -r skills/file-organizer ~/.claude/skills/
+```
+
+#### ⚡ OpenAI Codex / ChatGPT Developer Mode
+- Place `skills/file-organizer` in your repository root under `.agents/skills/` or `.codex/skills/`.
+- Alternatively, include `skills/file-organizer/SKILL.md` in your agent's system prompt or workspace instructions.
+
+#### 🌐 Other AI Agents (Cursor, Windsurf, Aider, Devin, etc.)
+This skill works seamlessly with **any AI agent or coding assistant** that supports external skills, custom rules, or runbooks. Simply copy the `skills/file-organizer` directory into your project's `.agents/skills/` folder or reference `SKILL.md`.
+
+Once installed, simply prompt your agent:
+> *"Organize my Downloads folder"* or type `/file-organizer`
 
 ---
 
 ### 2. ⚡ As a Model Context Protocol (MCP) Server
-Compatible with **Claude Desktop**, **Cursor**, **Zed**, **Windsurf**, and **Antigravity** across Windows, macOS, and Linux.
+Compatible with **ChatGPT for Desktop**, **Claude Desktop**, **Cursor**, **Zed**, **Windsurf**, and **Antigravity** across Windows, macOS, and Linux.
 
 #### Installation:
 ```bash
 pip install -e ".[mcp,media]"
 ```
 
-#### MCP Client Config (`mcpServers`):
+#### Client Configuration (`mcpServers`):
+Add the following to your MCP settings file (e.g. `claude_desktop_config.json`, ChatGPT Desktop MCP settings, or Cursor MCP config):
+
 ```json
 {
   "mcpServers": {
