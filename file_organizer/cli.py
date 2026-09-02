@@ -111,7 +111,7 @@ def cmd_undo(args):
 def main():
     parser = argparse.ArgumentParser(
         prog="file-organizer",
-        description="Intelligent file organizer for Linux & XDG desktops, Agent Skills, and MCP."
+        description="Intelligent file organizer for Windows, macOS, and Linux, Agent Skills, and MCP."
     )
     subparsers = parser.add_subparsers(dest="subcommand")
 

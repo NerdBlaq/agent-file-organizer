@@ -1,19 +1,27 @@
 # 🗂️ Agent File Organizer
 
-> **An intelligent, safety-first file organizer for Linux & XDG desktops, AI Agent Skills, FastMCP, and CLI.**
+> **An intelligent, safety-first, cross-platform file organizer for Windows, macOS, and Linux — powered by AI Agent Skills, FastMCP, and CLI.**
 
-Unlike simple scripts that mechanically dump every `.jpg` into Pictures and every `.pdf` into Documents, **Agent File Organizer** sorts files the way a careful human would:
-- Distinguishes between screenshots, camera/phone captures (via EXIF), receipts, and unknown images.
-- Distinguishes Minecraft mod `.jar` files (`fabric`, `forge`, `quilt`) from generic Java apps.
-- Organizes music by artist and album (via ID3 tags or filename semantics) while respecting existing flat libraries.
-- Separates screen recordings (OBS, Zoom, screencasts) from video clips and movies.
-- **Always dry-runs first** and records append-only logs for 100% reversible undos.
+Whether you use **Windows File Explorer**, **macOS Finder**, or **Linux desktop managers** (Nautilus, Dolphin, Thunar, etc.), **Agent File Organizer** works directly at the filesystem level. It delivers the careful, nuanced organization a human would do, rather than mechanically dumping files into broad buckets by extension alone.
+
+---
+
+## 🌟 Why Agent File Organizer?
+
+Traditional file organizers blindly sort by file extension (e.g. all `.jpg`s to Pictures). **Agent File Organizer** uses semantic understanding and content heuristics:
+
+- 📸 **Smart Image Sorting**: Distinguishes between screenshots, camera/phone captures (via EXIF metadata), receipts/invoices, and ambiguous images.
+- 🎮 **Minecraft & Mod Support**: Identifies Minecraft mod `.jar` files (`fabric`, `forge`, `quilt`, `neoforge`) and routes them cleanly away from generic application JARs.
+- 🎵 **Music & Audio Hierarchy**: Organizes music by `<Artist>/<Album>` using ID3 tags or filename patterns, while respecting existing flat music folders.
+- 🎥 **Video Classification**: Separates screen recordings (OBS, Zoom, screencasts) from clips and movies.
+- 💻 **Universal Compatibility**: Works natively on **Windows**, **macOS**, and **Linux** without requiring any proprietary file-manager plugins or APIs.
+- 🔒 **100% Reversible & Safe**: Every run performs a dry-run plan first, prevents accidental overwrites with collision suffixing, and writes append-only undo logs.
 
 ---
 
 ## 🚀 3 Ways to Use
 
-### 1. 🤖 As an AI Agent Skill (Claude Code & Antigravity)
+### 1. 🤖 As an AI Agent Skill (Claude Code, Antigravity, & AI Agents)
 This repository includes a drop-in **Agent Skill** compliant with the Agent Skills standard.
 
 - **Antigravity (Global)**:
@@ -37,14 +45,14 @@ Once installed, simply ask your agent:
 ---
 
 ### 2. ⚡ As a Model Context Protocol (MCP) Server
-Compatible with **Claude Desktop**, **Cursor**, **Zed**, **Windsurf**, and **Antigravity**.
+Compatible with **Claude Desktop**, **Cursor**, **Zed**, **Windsurf**, and **Antigravity** across Windows, macOS, and Linux.
 
 #### Installation:
 ```bash
 pip install -e ".[mcp,media]"
 ```
 
-#### Claude Desktop / Cursor Config (`mcpServers`):
+#### MCP Client Config (`mcpServers`):
 ```json
 {
   "mcpServers": {
@@ -66,14 +74,14 @@ pip install -e ".[mcp,media]"
 
 ---
 
-### 3. 💻 As a Standalone Python CLI Tool
+### 3. 💻 As a Standalone CLI Tool
 
 #### Install from source:
 ```bash
 pip install -e .
 ```
 
-#### Basic Commands:
+#### Cross-Platform Commands:
 
 **1. Quick Sort (Fresh-only mode with safe defaults):**
 ```bash
@@ -99,68 +107,12 @@ file-organizer undo ~/.file-organizer/logs/moves-<timestamp>.log
 
 ## 🛡️ Non-Negotiable Safety Rails
 
-1. **Dry-Run First**: Nothing moves without explicit inspection of the generated plan.
-2. **Move, Never Delete**: True duplicates are flagged for manual review; files are never deleted automatically.
+1. **Dry-Run First**: Nothing moves without explicit inspection and confirmation of the plan.
+2. **Move, Never Delete**: True duplicates are flagged for your manual review; files are never deleted automatically.
 3. **No Silent Overwrites**: When filenames collide at destination, a numeric suffix `(1)`, `(2)` is appended.
-4. **Append-Only Undo Log**: Every single move is `fsync`ed to `~/.file-organizer/logs/moves-*.log`.
-5. **No Dotfile Touching**: Hidden files (`.config`, `.git`, etc.) and in-progress downloads (`.crdownload`, `.part`, `.tmp`) are strictly ignored.
+4. **Append-Only Undo Log**: Every single move is safely recorded and can be reversed with one command (`file-organizer undo`).
+5. **No System / Hidden Files**: Hidden files (`.config`, `.git`, `Thumbs.db`, `.DS_Store`) and in-progress downloads (`.crdownload`, `.part`, `.tmp`) are strictly ignored.
 6. **Prior Run Memory**: Files already placed by a previous run will not be re-flagged or churned.
-
----
-
-## 🌐 How to Publish & Share This Online
-
-Here is your step-by-step guide to releasing this package to the public:
-
-### A. Publish on GitHub
-1. **Initialize Git Repository**:
-   ```bash
-   cd "/home/michael/Documents/File Organiser App"
-   git init
-   git add .
-   git commit -m "feat: initial release of agent-file-organizer (Skill, FastMCP, CLI)"
-   ```
-2. **Create a GitHub Repository**:
-   - Go to [github.com/new](https://github.com/new) and create a public repository (e.g. `agent-file-organizer`).
-3. **Push Code**:
-   ```bash
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/agent-file-organizer.git
-   git push -u origin main
-   ```
-4. **Add Topics & Tags**:
-   - On GitHub, add topics: `agent-skills`, `claude-code`, `antigravity`, `mcp-server`, `fastmcp`, `file-organizer`, `linux-desktop`.
-
----
-
-### B. Publish to PyPI (Python Package Index)
-This allows anyone to run `pip install agent-file-organizer`:
-
-1. **Install build tools**:
-   ```bash
-   pip install build twine
-   ```
-2. **Build package distributions**:
-   ```bash
-   python3 -m build
-   ```
-3. **Upload to PyPI**:
-   ```bash
-   twine upload dist/*
-   ```
-
----
-
-### C. Publish to MCP Registries (Smithery & Glama)
-1. **Smithery.ai**:
-   - Visit [smithery.ai](https://smithery.ai).
-   - Sign in with GitHub and click **"Submit a Server"**.
-   - Paste your GitHub repo URL.
-2. **Glama.ai**:
-   - Visit [glama.ai/mcp/servers](https://glama.ai/mcp/servers).
-   - Submit your repository for automated indexing.
-3. **PulseMCP / MCP.so**:
-   - Submit your repo URL to [pulsemcp.com](https://pulsemcp.com) and [mcp.so](https://mcp.so).
 
 ---
 
@@ -168,6 +120,7 @@ This allows anyone to run `pip install agent-file-organizer`:
 
 ```text
 ├── README.md                      # Master Guide & Documentation
+├── SKILL.md                       # Agent Skill definition (root)
 ├── pyproject.toml                 # Package definition & CLI/MCP entrypoints
 ├── LICENSE                        # MIT License
 ├── .gitignore                     # Git ignore rules

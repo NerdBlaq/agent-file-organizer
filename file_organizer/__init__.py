@@ -1,5 +1,5 @@
 """
-Agent File Organizer - Intelligent, safety-first file organizer for Linux & XDG desktops, Agent Skills, and MCP.
+Agent File Organizer - Intelligent, safety-first file organizer for Windows, macOS, and Linux, Agent Skills, and MCP.
 """
 __version__ = "1.0.0"
 

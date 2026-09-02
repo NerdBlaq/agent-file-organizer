@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agent-file-organizer"
 version = "1.0.0"
-description = "Intelligent, safety-first file organizer for Linux & XDG desktops, Agent Skills, and MCP."
+description = "Intelligent, safety-first, cross-platform file organizer for Windows, macOS, Linux, AI Agent Skills, and FastMCP."
 readme = "README.md"
 authors = [
     { name = "Michael" }
 ]
 license = { text = "MIT" }
-keywords = ["file-organizer", "ai-agent", "agent-skill", "claude-code", "antigravity", "mcp", "fastmcp"]
+keywords = ["file-organizer", "ai-agent", "agent-skill", "claude-code", "antigravity", "mcp", "fastmcp", "cross-platform", "windows", "macos", "linux"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: End Users/Desktop",
@@ -23,6 +23,9 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Utilities",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
 ]
 requires-python = ">=3.9"
