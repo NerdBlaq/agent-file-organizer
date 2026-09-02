@@ -3,7 +3,7 @@
 > **An intelligent, safety-first, cross-platform file organizer for Windows, macOS, and Linux — powered by AI Agent Skills, FastMCP, and CLI.**
 
 [![PyPI version](https://img.shields.io/pypi/v/agent-file-organizer.svg)](https://pypi.org/project/agent-file-organizer/)
-[![smithery badge](https://smithery.ai/badge/agent-file-organizer)](https://smithery.ai/server/agent-file-organizer)
+[![smithery badge](https://smithery.ai/badge/michaelattah80/file-organizer)](https://smithery.ai/server/michaelattah80/file-organizer)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/NerdBlaq/agent-file-organizer)
 
@@ -13,11 +13,34 @@ Whether you use **Windows File Explorer**, **macOS Finder**, or **Linux desktop 
 
 ## ⚡ Quick Install
 
-| Method | Command / Link |
-|---|---|
-| **pip (recommended)** | `pip install agent-file-organizer` |
-| **MCP via Smithery** | [smithery.ai/server/agent-file-organizer](https://smithery.ai/server/agent-file-organizer) |
-| **Agent Skill** | Clone repo and copy `skills/file-organizer/` to your agent's skills folder |
+### 🐍 pip (Python package)
+```bash
+pip install agent-file-organizer
+```
+👉 [pypi.org/project/agent-file-organizer](https://pypi.org/project/agent-file-organizer/)
+
+---
+
+### 🤖 MCP via Smithery (for AI Agents — Claude, Codex, Cursor, etc.)
+Smithery installs and auto-configures the MCP server for your agent client:
+
+**Claude Code / Claude Desktop:**
+```bash
+npx -y @smithery/cli install michaelattah80/file-organizer --client claude
+```
+
+**Cursor:**
+```bash
+npx -y @smithery/cli install michaelattah80/file-organizer --client cursor
+```
+
+**Codex:**
+```bash
+npx -y @smithery/cli install michaelattah80/file-organizer --client codex
+```
+
+**Or browse & install via the web UI:**
+👉 [smithery.ai/server/michaelattah80/file-organizer](https://smithery.ai/server/michaelattah80/file-organizer)
 
 ---
 
