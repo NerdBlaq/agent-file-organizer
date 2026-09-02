@@ -44,6 +44,27 @@ npx -y @smithery/cli install michaelattah80/file-organizer --client codex
 
 ---
 
+### 📦 Agent Skill — Install from GitHub
+For agents that support external skills (Antigravity, Claude Code, Codex, Cursor, etc.):
+
+**Clone the full repository:**
+```bash
+git clone https://github.com/NerdBlaq/agent-file-organizer.git
+```
+
+**Then copy the skill to your agent's skills folder:**
+
+| Agent | Command |
+|---|---|
+| **Antigravity (global)** | `cp -r agent-file-organizer/skills/file-organizer ~/.gemini/config/skills/` |
+| **Claude Code** | `cp -r agent-file-organizer/skills/file-organizer ~/.claude/skills/` |
+| **Any agent (project-level)** | `cp -r agent-file-organizer/skills/file-organizer .agents/skills/` |
+
+**Or download just the skill folder (no git required):**
+👉 [Download skills/file-organizer as ZIP](https://github.com/NerdBlaq/agent-file-organizer/archive/refs/heads/main.zip)
+
+---
+
 ## 🌟 Why Agent File Organizer?
 
 Traditional file organizers blindly sort by file extension (e.g. all `.jpg`s to Pictures). **Agent File Organizer** uses semantic understanding and content heuristics:
