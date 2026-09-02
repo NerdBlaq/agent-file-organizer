@@ -2,7 +2,22 @@
 
 > **An intelligent, safety-first, cross-platform file organizer for Windows, macOS, and Linux — powered by AI Agent Skills, FastMCP, and CLI.**
 
+[![PyPI version](https://img.shields.io/pypi/v/agent-file-organizer.svg)](https://pypi.org/project/agent-file-organizer/)
+[![smithery badge](https://smithery.ai/badge/agent-file-organizer)](https://smithery.ai/server/agent-file-organizer)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/NerdBlaq/agent-file-organizer)
+
 Whether you use **Windows File Explorer**, **macOS Finder**, or **Linux desktop managers** (Nautilus, Dolphin, Thunar, etc.), **Agent File Organizer** works directly at the filesystem level. It delivers the careful, nuanced organization a human would do, rather than mechanically dumping files into broad buckets by extension alone.
+
+---
+
+## ⚡ Quick Install
+
+| Method | Command / Link |
+|---|---|
+| **pip (recommended)** | `pip install agent-file-organizer` |
+| **MCP via Smithery** | [smithery.ai/server/agent-file-organizer](https://smithery.ai/server/agent-file-organizer) |
+| **Agent Skill** | Clone repo and copy `skills/file-organizer/` to your agent's skills folder |
 
 ---
 
@@ -56,7 +71,16 @@ Once installed, simply prompt your agent:
 ### 2. ⚡ As a Model Context Protocol (MCP) Server
 Compatible with **ChatGPT for Desktop**, **Claude Desktop**, **Cursor**, **Zed**, **Windsurf**, and **Antigravity** across Windows, macOS, and Linux.
 
-#### Installation:
+#### Option A — Install via Smithery (one-click, no setup):
+👉 **[smithery.ai/server/agent-file-organizer](https://smithery.ai/server/agent-file-organizer)**
+
+Smithery auto-configures the MCP server for your client — no manual JSON editing needed.
+
+#### Option B — Install via pip:
+```bash
+pip install agent-file-organizer
+```
+Or install from source with optional extras:
 ```bash
 pip install -e ".[mcp,media]"
 ```
@@ -87,7 +111,12 @@ Add the following to your MCP settings file (e.g. `claude_desktop_config.json`, 
 
 ### 3. 💻 As a Standalone CLI Tool
 
-#### Install from source:
+#### Install from PyPI:
+```bash
+pip install agent-file-organizer
+```
+
+#### Or install from source:
 ```bash
 pip install -e .
 ```
