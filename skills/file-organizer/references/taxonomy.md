@@ -55,6 +55,10 @@ Not placed in a bucket by extension alone, because a `.jar` is as often a Minecr
 
 Reorganize mode turns this protection off, which means files that are already inside an organized folder become eligible to move again under the plain taxonomy rules above — including cases where the folder was carrying information a tag or filename doesn't (e.g. an artist folder with no ID3 tags). Don't treat Reorganize as "the thorough version of Extend" — it's a different, higher-risk operation that can throw away information the user's own filing already captured, and it needs its own explicit confirmation, not a rollover from a general "looks good."
 
+## Special case: software/game package directories (v1.1.2, Integrity Guard)
+
+A directory containing at least one `.exe`, `.dll`, `.so`, `.dylib`, `.bin`, or `.msi` file is treated as an atomic package, in every structure mode — including `reorganize`, which otherwise ignores existing folder boundaries entirely. Neither its own files nor anything in its subdirectories are individually classified or moved; the whole directory is left exactly as found, and reported in `plan.md` under "protected directories." This exists because reorganize mode flattening a curated document folder is a misfiling (annoying, fully recoverable via the destination folder name); reorganize mode flattening a game or application install actually breaks the software, which is a different order of harm and isn't something a taxonomy override should be able to touch.
+
 ## What NOT to do
 
 - Don't build clusters around inferred identity, relationships, health, or other sensitive attributes of people in photos — "People" is fine, speculative labels like specific names or relationships are not something Claude can know reliably from a photo alone.

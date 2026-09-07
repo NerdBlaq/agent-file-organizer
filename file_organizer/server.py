@@ -17,6 +17,7 @@ from file_organizer.core.structure import detect_structure, render_structure_mar
 from file_organizer.core.scanner import build_plan, render_plan_markdown
 from file_organizer.core.applier import apply_plan
 from file_organizer.core.undo import execute_undo
+from file_organizer.core.verify import verify_recovery
 from file_organizer.core.plan_editing import add_move, set_dest_dir, drop_move
 
 
@@ -106,17 +107,25 @@ def create_mcp_server():
     def execute_move_plan(
         plan_json: str,
         dry_run: bool = False,
-        base_dir: str = "~"
+        base_dir: Optional[str] = None,
+        allow_cross_filesystem: bool = False,
     ) -> str:
         """Apply a confirmed organization plan. Moves files safely with collision handling.
-        
+
         Args:
             plan_json: The plan JSON string to apply
             dry_run: If True, simulates moves without touching the filesystem
-            base_dir: Base directory (defaults to home directory '~')
+            base_dir: Base directory for destinations. If omitted, derived from the plan's own
+                scanned targets instead of defaulting to home — this matters for external drives:
+                a plan scanned from an external drive stays on that drive unless you explicitly
+                pass a different base_dir.
+            allow_cross_filesystem: Permit moves that cross a filesystem/drive boundary. Off by
+                default; a plan whose targets are on a different drive than base_dir will abort
+                with nothing moved unless this is set, since that combination is exactly what
+                causes files to end up somewhere the user didn't intend.
         """
         plan = json.loads(plan_json)
-        result = apply_plan(plan=plan, base_dir=base_dir, dry_run=dry_run)
+        result = apply_plan(plan=plan, base_dir=base_dir, dry_run=dry_run, allow_cross_filesystem=allow_cross_filesystem)
         return json.dumps(result, indent=2)
 
     @mcp.tool()
@@ -133,6 +142,19 @@ def create_mcp_server():
             limit: Optional limit to undo only the last N moves
         """
         result = execute_undo(log_path=log_path, dry_run=dry_run, limit=limit)
+        return json.dumps(result, indent=2)
+
+    @mcp.tool()
+    def verify_recovery_state(log_path: str) -> str:
+        """Check a moves log against the ACTUAL current filesystem state. Call this after
+        undo_past_moves — or after any manual recovery attempt — before telling the user
+        anything is restored. Added after an incident where an agent declared a recovery
+        complete based on one incomplete search rather than checking the log itself.
+
+        Args:
+            log_path: Path to the moves-*.log file to verify against current disk state
+        """
+        result = verify_recovery(log_path)
         return json.dumps(result, indent=2)
 
     return mcp
@@ -160,6 +182,7 @@ def run_stdio_jsonrpc():
                             {"name": "generate_organize_plan", "description": "Scan and build a dry-run organize plan."},
                             {"name": "execute_move_plan", "description": "Apply a confirmed organization plan."},
                             {"name": "undo_past_moves", "description": "Reverse past moves from an undo log."},
+                            {"name": "verify_recovery_state", "description": "Check a moves log against actual current filesystem state."},
                         ]
                     }
                 }

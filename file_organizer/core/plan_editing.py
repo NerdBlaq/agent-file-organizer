@@ -91,3 +91,31 @@ def drop_move(plan: Dict[str, Any], src: str | Path) -> Dict[str, Any]:
 
 def pending_review_srcs(plan: Dict[str, Any]) -> List[str]:
     return [r["src"] for r in plan.get("needs_review", [])]
+
+
+def split_by_top_level_dest(plan: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """v1.1.2: for large or reorganize-mode plans, apply in batches by
+    top-level destination category instead of one all-or-nothing apply —
+    a natural checkpoint between categories rather than a single command
+    that either succeeds or fails on everything at once. Returns
+    {category: plan_dict}; metadata is copied to every batch, but
+    needs_review/skipped/protected_dirs only appear in the first so they
+    aren't reported N times over."""
+    from collections import defaultdict
+    buckets: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for m in plan.get("moves", []):
+        top = m["dest_dir"].split("/")[0]
+        buckets[top].append(m)
+
+    result: Dict[str, Dict[str, Any]] = {}
+    first = True
+    for category, moves in sorted(buckets.items()):
+        sub = {k: v for k, v in plan.items() if k != "moves"}
+        sub["moves"] = moves
+        if not first:
+            sub["needs_review"] = []
+            sub["skipped"] = []
+            sub["protected_dirs"] = []
+        result[category] = sub
+        first = False
+    return result

@@ -110,3 +110,30 @@ def drop_move(plan, src):
 def pending_review_srcs(plan):
     """Convenience: list of src paths still waiting on a visual-review decision."""
     return [r["src"] for r in plan.get("needs_review", [])]
+
+
+def split_by_top_level_dest(plan):
+    """v1.1.2: for large or reorganize-mode plans, apply in batches by top-
+    level destination category instead of one all-or-nothing apply — a
+    natural checkpoint between categories. Returns {category: plan_dict};
+    metadata is copied to every batch, but needs_review/skipped/
+    protected_dirs only appear in the first so they aren't reported N
+    times over."""
+    from collections import defaultdict
+    buckets = defaultdict(list)
+    for m in plan.get("moves", []):
+        top = m["dest_dir"].split("/")[0]
+        buckets[top].append(m)
+
+    result = {}
+    first = True
+    for category, moves in sorted(buckets.items()):
+        sub = {k: v for k, v in plan.items() if k != "moves"}
+        sub["moves"] = moves
+        if not first:
+            sub["needs_review"] = []
+            sub["skipped"] = []
+            sub["protected_dirs"] = []
+        result[category] = sub
+        first = False
+    return result

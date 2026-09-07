@@ -56,3 +56,10 @@ DEFAULT_CLUSTER_LEAF_NAMES = {
     "movies", "clips", "screen recordings", "installers", "archives",
     "disk images", "diskimages", "fonts", "code",
 }
+
+# v1.1.2 Integrity Guard: a directory containing any of these is treated as
+# an atomic software/game package and never reached into, in ANY structure
+# mode including reorganize. Added after an incident where reorganize mode
+# flattened curated folders; the same behavior against a game or app install
+# doesn't just misfile something, it breaks the software.
+PACKAGE_EXTS = {"exe", "dll", "so", "dylib", "bin", "msi"}

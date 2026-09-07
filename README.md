@@ -77,6 +77,12 @@ file-organizer apply --plan /tmp/plan.json
 file-organizer undo ~/.file-organizer/logs/moves-<timestamp>.log
 ```
 
+**Verify a recovery actually completed (v1.1.2):**
+```bash
+file-organizer verify ~/.file-organizer/logs/moves-<timestamp>.log
+```
+Checks the real filesystem state against the log — run this before trusting that an undo (or any manual recovery) actually worked, not a one-off search.
+
 **Detect existing folder structure first:**
 ```bash
 file-organizer detect --targets ~/Pictures ~/Videos ~/Music
@@ -125,8 +131,9 @@ Connect Agent File Organizer directly to **Claude Desktop**, **ChatGPT for Deskt
 | `generate_organize_plan` | Scans files and builds a dry-run move plan |
 | `modify_plan_move` | Adjusts a planned destination before applying |
 | `remove_move_from_plan` | Excludes a file from the plan |
-| `execute_move_plan` | Applies moves safely with collision protection |
+| `execute_move_plan` | Applies moves safely with collision protection, path isolation, and Integrity Guard enforcement |
 | `undo_past_moves` | Reverses any previous run |
+| `verify_recovery_state` | Checks a moves log against actual current filesystem state (v1.1.2) — call this before reporting a recovery as complete |
 
 ---
 
@@ -138,6 +145,11 @@ Connect Agent File Organizer directly to **Claude Desktop**, **ChatGPT for Deskt
 4. **Full undo** — every move is logged and 100% reversible
 5. **Skips system files** — ignores `.DS_Store`, `Thumbs.db`, `.git`, `.tmp`, `.crdownload`, etc.
 6. **Remembers past runs** — files already organized won't be moved again
+7. **Path isolation (v1.1.2)** — the base directory is derived from what was actually scanned, never silently defaulted to your home folder; a move that would cross a filesystem/drive boundary aborts before touching anything unless you explicitly allow it
+8. **Integrity Guard (v1.1.2)** — a folder containing `.exe`/`.dll`/`.so`/`.dylib`/`.bin`/`.msi` is treated as an atomic software/game package and never reached into, in any mode, including Reorganize
+9. **Verified recovery (v1.1.2)** — `verify` checks a moves log against actual current filesystem state, so "restored" is a confirmed fact, not an assumption
+
+Items 7–9 were added directly in response to a real incident: a run with no explicit base moved files from an external drive onto the OS partition, and a separate reorganize run flattened curated folders. Both failure modes are now structurally blocked rather than just documented against.
 
 ---
 

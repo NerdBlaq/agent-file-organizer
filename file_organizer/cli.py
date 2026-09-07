@@ -10,6 +10,7 @@ from file_organizer.core.structure import detect_structure, render_structure_mar
 from file_organizer.core.scanner import build_plan, render_plan_markdown, load_config
 from file_organizer.core.applier import apply_plan
 from file_organizer.core.undo import execute_undo
+from file_organizer.core.verify import verify_recovery, render_verify_text
 from file_organizer.core.plan_editing import (
     load_plan, save_plan, add_move, set_dest_dir, drop_move
 )
@@ -67,18 +68,38 @@ def cmd_apply(args):
         base_dir=args.base,
         dry_run=args.dry_run,
         log_dir=args.log_dir,
+        allow_cross_filesystem=args.allow_cross_filesystem,
     )
 
+    if result.get("aborted"):
+        print(f"ABORTED before moving anything: {result['abort_reason']}", file=sys.stderr)
+        for v in result.get("cross_filesystem_violations", [])[:10]:
+            print(f"  {v}", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Base: {result['base']}")
     if args.dry_run:
         print(f"--dry-run: No files moved. Log path would be: {result['log_path']}")
         for act in result.get("actions", []):
             if act.get("status") == "would_move":
                 print(f"  WOULD MOVE: {act['src']} -> {act['dest']}")
     else:
-        print(f"Moved {result['moved']} file(s) ({result['failed']} failed, {result['skipped_noop']} no-op).")
+        print(f"Moved {result['moved']} file(s) ({result['failed']} failed, {result['skipped_noop']} no-op, "
+              f"{result.get('protected_skipped', 0)} protected-directory item(s) skipped).")
         print(f"Undo log written to: {result['log_path']}")
         if result.get("collisions"):
             print(f"Note: {len(result['collisions'])} name collision(s) resolved with numeric suffixes.")
+
+
+def cmd_verify(args):
+    try:
+        result = verify_recovery(args.log_path)
+    except FileNotFoundError as e:
+        print(f"ERROR: {e}", file=sys.stderr)
+        sys.exit(1)
+    print(render_verify_text(result))
+    if not result["complete"]:
+        sys.exit(1)
 
 
 def cmd_undo(args):
@@ -136,9 +157,15 @@ def main():
     # apply
     p_apply = subparsers.add_parser("apply", help="Apply a confirmed plan")
     p_apply.add_argument("--plan", required=True, help="Path to plan.json")
-    p_apply.add_argument("--base", default="~", help="Base home directory")
+    p_apply.add_argument("--base", default=None,
+                          help="Base directory that dest_dir entries are relative to. If omitted, derived from "
+                               "the plan's own 'targets' field instead of defaulting to home (v1.1.2).")
     p_apply.add_argument("--dry-run", action="store_true", help="Simulate without moving")
     p_apply.add_argument("--log-dir", default="~/.file-organizer/logs", help="Undo log directory")
+    p_apply.add_argument("--allow-cross-filesystem", action="store_true",
+                          help="Permit moves whose destination resolves onto a different filesystem/drive than "
+                               "the base. Off by default — this is the exact failure mode from a real incident "
+                               "where files moved from an external drive onto the OS partition unintentionally.")
 
     # undo
     p_undo = subparsers.add_parser("undo", help="Reverse a past run from its undo log")
@@ -146,8 +173,12 @@ def main():
     p_undo.add_argument("--dry-run", action="store_true", help="Preview undo without moving")
     p_undo.add_argument("--limit", type=int, help="Only undo last N moves")
 
+    # verify (v1.1.2)
+    p_verify = subparsers.add_parser("verify", help="Check a moves log against actual filesystem state — run this before declaring a recovery complete")
+    p_verify.add_argument("log_path", help="Path to moves-*.log")
+
     # Quick shortcut at top level if no subcommand given but --targets provided
-    if len(sys.argv) > 1 and sys.argv[1] not in ("detect", "scan", "apply", "undo", "-h", "--help"):
+    if len(sys.argv) > 1 and sys.argv[1] not in ("detect", "scan", "apply", "undo", "verify", "-h", "--help"):
         # Default to scan command
         sys.argv.insert(1, "scan")
 
@@ -161,6 +192,8 @@ def main():
         cmd_apply(args)
     elif args.subcommand == "undo":
         cmd_undo(args)
+    elif args.subcommand == "verify":
+        cmd_verify(args)
     else:
         parser.print_help()
 

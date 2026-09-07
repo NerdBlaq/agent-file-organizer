@@ -70,6 +70,23 @@ CANDIDATE_DESTINATIONS = {
     "unrecognized-extension": None,
 }
 
+# v1.1.2 Integrity Guard: a directory containing any of these is treated as
+# an atomic software/game package and never reached into, in ANY structure
+# mode including reorganize. Added after an incident where reorganize mode
+# flattened curated folders; the same behavior against a game/software
+# install breaks it, not just misfiles something.
+PACKAGE_EXTS = {"exe", "dll", "so", "dylib", "bin", "msi"}
+
+
+def looks_like_package_dir(dir_path: Path) -> bool:
+    try:
+        for entry in dir_path.iterdir():
+            if entry.is_file() and entry.suffix.lower().lstrip(".") in PACKAGE_EXTS:
+                return True
+    except (PermissionError, OSError):
+        pass
+    return False
+
 
 def load_config(path):
     if not path:
@@ -324,7 +341,9 @@ def recognized_subdirs_for(target: Path, structure_report) -> set:
     return set(entry.get("subdirs", []))
 
 
-def walk_target(target: Path, recursive: bool, exclude_set, structure_mode: str, recognized: set):
+def walk_target(target: Path, recursive: bool, exclude_set, structure_mode: str, recognized: set, protected_dirs: list = None):
+    if protected_dirs is None:
+        protected_dirs = []
     if not recursive:
         for entry in target.iterdir():
             if entry.is_file():
@@ -334,6 +353,12 @@ def walk_target(target: Path, recursive: bool, exclude_set, structure_mode: str,
     for root, dirs, files in os.walk(target):
         root_path = Path(root)
         if any(str(root_path).startswith(str(Path(e).expanduser())) for e in exclude_set):
+            dirs[:] = []
+            continue
+        if looks_like_package_dir(root_path):
+            # Overrides structure_mode entirely, including "reorganize" —
+            # this isn't a filing preference to override, it's damage.
+            protected_dirs.append(str(root_path))
             dirs[:] = []
             continue
         if root_path != target:
@@ -407,6 +432,7 @@ def main():
     moves, reviews, skips = [], [], []
     all_classified_paths = []
     target_modes_used = {}
+    protected_dirs = []
 
     for target in all_targets:
         if not target.exists():
@@ -415,7 +441,7 @@ def main():
         effective_recursive = base_recursive or target_mode in ("extend", "reorganize")
         target_modes_used[str(target)] = target_mode
         recognized = recognized_subdirs_for(target, structure_report)
-        for path in walk_target(target, effective_recursive, exclude_set, target_mode, recognized):
+        for path in walk_target(target, effective_recursive, exclude_set, target_mode, recognized, protected_dirs):
             result = classify(path, config, ambiguous_budget, all_schemes, prior_run_destinations, from_target=target)
             if result is None:
                 continue
@@ -449,6 +475,7 @@ def main():
         "skipped": skips,
         "duplicates": duplicates,
         "review_truncated": review_truncated,
+        "protected_dirs": protected_dirs,
         "notes": notes,
     }
 
@@ -466,6 +493,10 @@ def main():
         md_lines.append(f"⚠️ Only {review_truncated['shown']} of {review_truncated['total']} ambiguous images were reviewed.")
         md_lines.append("")
     md_lines.append(f"Targets: {', '.join(plan['targets'])}")
+    if protected_dirs:
+        md_lines.append(f"⚠️ {len(protected_dirs)} directory/directories protected as software/game packages (contain .exe/.dll/.so/.dylib/.bin/.msi) — left untouched:")
+        for pd in protected_dirs:
+            md_lines.append(f"  - {pd}")
     md_lines.append("")
     md_lines.append("## Proposed moves by destination")
     for dest, count in sorted(dest_counts.items()):
